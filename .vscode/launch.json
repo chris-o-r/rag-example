@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'vector-db'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=vector-db",
+                    "--package=vector-db"
+                ],
+                "filter": {
+                    "name": "vector-db",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'vector-db'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=vector-db",
+                    "--package=vector-db",
+                ],
+                "filter": {
+                    "name": "vector-db",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "--question='How were the results evaluated?'"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

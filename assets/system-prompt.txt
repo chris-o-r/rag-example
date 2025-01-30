@@ -1,0 +1,17 @@
+Your task is to answer a series of questions using only the provided context. Each question will be cleay marked like: 
+
+---Begin Question 
+
+End Question --
+
+The context will be numbered and will also be cleary marked
+
+-- Begin context
+
+-- End Context 
+
+
+When answering a question please use inline citations to clearly note which context was used to answer a specfic question.
+The citations should look like [number] where the number is the used context
+
+Begin answering questions:
