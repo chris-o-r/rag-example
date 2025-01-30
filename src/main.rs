@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use std::{env, fs};
+use std::{env, fs, iter};
 
 use text_splitter::{ChunkConfig, TextSplitter};
 // Can also use anything else that implements the ChunkSizer
@@ -15,7 +15,6 @@ use openai_api_rs::v1::{
 };
 use pgvector::Vector;
 
-mod character_text_splitter;
 mod models;
 mod store;
 
@@ -25,6 +24,7 @@ const QUESTIONS: [&str; 11] = ["What are the main objectives of the study on Tab
 ", "Who are the authors of the paper?", "What is the title of the paper?", "What is the abstract of the paper?", "What is the introduction of the paper?", "What is the methodology of the paper?", "What is the related work of the paper?", "What is the conclusion of the paper?", "What is the future work of the paper?"];
 
 const DOCUMENT: &str = "assets/research.txt";
+const MAX_TOKENS: usize = 1000;
 
 #[tokio::main]
 async fn main() {
@@ -69,15 +69,40 @@ async fn main() {
         };
     }
 
-    let mut results: Vec<MessagePair> = Vec::new();
+    let (results, chat_window) = answer_questions(
+        &QUESTIONS
+            .to_vec()
+            .iter()
+            .map(|question| question.to_string())
+            .collect(),
+        &model,
+        &pool,
+    )
+    .await
+    .map_err(|err| {
+        panic!("Cannot answer questions [{}]", err.to_string());
+    })
+    .unwrap();
 
-    let system_prompt = fs::read_to_string("assets/system-prompt.txt").unwrap();
+    let _has_saved = save_logs(chat_window.as_str(), &results);
+
+    // Print the results as json
+    println!("{}", serde_json::to_string_pretty(&results).unwrap());
+}
+
+async fn answer_questions(
+    questions: &Vec<String>,
+    model: &TextEmbedding,
+    pool: &sqlx::Pool<sqlx::Postgres>,
+) -> Result<(Vec<MessagePair>, String), anyhow::Error> {
+    let system_prompt = fs::read_to_string("assets/system-prompt.txt")?;
+    let mut results: Vec<MessagePair> = Vec::new();
 
     let mut chat_window = String::new();
 
     chat_window.push_str(&system_prompt);
 
-    for question in QUESTIONS {
+    for question in questions {
         let question_embeddings = model
             .embed(vec![question.to_lowercase()], None)
             .unwrap()
@@ -88,9 +113,8 @@ async fn main() {
         let embeddings: Vec<Embedding> = store::retrieve_embeddings(&pool, question_embeddings, 3)
             .await
             .map_err(|err| {
-                panic!("Cannot retrieve embeddings [{}]", err.to_string());
-            })
-            .unwrap();
+                anyhow::Error::msg(format!("Cannot retrieve embeddings [{}]", err.to_string()))
+            })?;
 
         let mut index = 0;
         let references_text = embeddings
@@ -134,13 +158,7 @@ async fn main() {
         ));
     }
 
-    let json = serde_json::to_string(&results).unwrap();
-
-    fs::write("log.txt", chat_window).unwrap();
-    fs::write("results.json", json).unwrap();
-
-    // Print the results as json
-    println!("{}", serde_json::to_string_pretty(&results).unwrap());
+    Ok((results, chat_window))
 }
 
 async fn make_open_api_request(message: &str) -> Result<ChatCompletionResponse, anyhow::Error> {
@@ -170,12 +188,11 @@ fn create_embeddings_from_document(
     model: &TextEmbedding,
     document_name: &str,
 ) -> Result<Vec<Embedding>, anyhow::Error> {
-    let document_text: String = std::fs::read_to_string(document_name)?;
+    let document_text = std::fs::read_to_string(document_name)?;
 
     let tokenizer = Tokenizer::from_pretrained("bert-base-cased", None).unwrap();
-    let max_tokens = 1000;
     let splitter: TextSplitter<Tokenizer> =
-        TextSplitter::new(ChunkConfig::new(max_tokens).with_sizer(tokenizer));
+        TextSplitter::new(ChunkConfig::new(MAX_TOKENS).with_sizer(tokenizer));
 
     let document_chunks = splitter.chunks(&document_text).collect::<Vec<_>>();
 
@@ -198,4 +215,40 @@ fn create_embeddings_from_document(
         .collect();
 
     Ok(vec_text_pairs)
+}
+
+fn save_logs(chat_window: &str, results: &Vec<MessagePair>) -> Result<(), anyhow::Error> {
+    match std::fs::exists("logs") {
+        Ok(exists) => {
+            if !exists {
+                std::fs::create_dir("logs")?;
+            }
+        }
+        Err(err) => {
+            return Err(anyhow::Error::msg(format!(
+                "Cannot check if logs directory exists [{}]",
+                err.to_string()
+            )));
+        }
+    }
+
+    let folder_name = format!("logs/{}", chrono::Utc::now().to_rfc3339());
+
+    match std::fs::create_dir(&folder_name) {
+        Ok(_) => {}
+        Err(err) => {
+            return Err(anyhow::Error::msg(format!(
+                "Cannot create logs directory [{}]",
+                err.to_string()
+            )));
+        }
+    }
+
+    let chat_window_file = format!("{}/chat_window.txt", folder_name);
+    let results_file = format!("{}/results.json", folder_name);
+
+    std::fs::write(chat_window_file, chat_window)?;
+    std::fs::write(results_file, serde_json::to_string_pretty(results)?)?;
+
+    Ok(())
 }
