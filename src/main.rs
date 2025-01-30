@@ -136,6 +136,7 @@ async fn main() {
 
     let json = serde_json::to_string(&results).unwrap();
 
+    fs::write("log.txt", chat_window).unwrap();
     fs::write("results.json", json).unwrap();
 
     // Print the results as json

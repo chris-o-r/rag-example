@@ -1,0 +1,2757 @@
+Your task is to answer a series of questions using only the provided context. Each question will be cleay marked like: 
+
+---Begin Question 
+
+End Question --
+
+The context will be numbered and will also be cleary marked
+
+-- Begin context
+
+-- End Context 
+
+
+When answering a question please use inline citations to clearly note which context was used to answer a specfic question.
+The citations should look like [number] where the number is the used context
+
+Begin answering questions:---Begin Question
+What are the main objectives of the study on Table Information Seeking (TIS) in Large Language Models (LLMs)?
+--End Question --Begin Context
+arXiv:2402.12424v5 [cs.LG] 17 Oct 2024
+Tables as Texts or Images:
+Evaluating the Table Reasoning Ability of LLMs and MLLMs
+Naihao Deng* , Zhenjie Sun* , Ruiqi He , Aman Sikka ,
+Yulong Chen , Lin Ma , Yue Zhang , Rada Mihalcea
+University of Michigan University of Cambridge Westlake University
+{dnaihao, zjsun}@umich.edu
+Abstract
+In this paper, we investigate the effectiveness
+of various LLMs in interpreting tabular data
+through different prompting strategies and data
+formats. Our analyses extend across six bench-
+marks for table-related tasks such as question-
+answering and fact-checking. We introduce
+for the first time the assessment of LLMs’
+performance on image-based table represen-
+tations. Specifically, we compare five text-
+based and three image-based table represen-
+tations, demonstrating the role of representa-
+tion and prompting on LLM performance. Our
+study provides insights into the effective use
+of LLMs on table-related tasks. Our data is
+available at: https://github.com/dnaihao/
+Tables-as-Texts-or-Images.
+1 Introduction
+Recent years have witnessed an explosion of Large
+Language Models (LLMs), with impressive per-
+formance on various Natural Language Processing
+(NLP) tasks (Brown et al., 2020; Touvron et al.,
+2023; Team et al., 2023). Research to date has
+examined the performance of LLMs for various
+aspects and abilities (Bang et al., 2023b; Bubeck
+et al., 2023; Akter et al., 2023), but their effec-
+tiveness on structured data such as tables is less
+explored.
+Unlike unstructured text, tables are systemat-
+ically organized structures of a large amount of
+information. This characteristic makes tabular
+data serve as the foundations for numerous ap-
+plications, including medical diagnostics, virtual
+personal assistants, customer relationship manage-
+ment (Hemphill et al., 1990; Dahl et al., 1994;
+Akhtar et al., 2022; Xie et al., 2022), etc.
+The evaluation of LLMs on processing tabular
+data involves many challenges. First, there are
+many ways to represent the information in tables.
+*Contributed equally to this work. Appendix A lists the
+detailed contributions.
+If we represent the table in pure text, we may use
+naive linearization or insert brackets to better rep-
+resent table structures. Meanwhile, emerging mul-
+timodal LLMs like GPT-4 (Achiam et al., 2023)
+and Gemini (Team et al., 2023) offer image-based
+approaches, where we can pass the table as im-
+ages to the LLMs. In such cases, visual cues like
+color highlighting in tables can influence outcomes.
+Second, diverse prompting methods for text may
+also apply to tabular data, which can yield varied
+results (Wei et al., 2022). Furthermore, the tasks
+involving tabular data are diverse, including table
+fact-checking (Chen et al., 2019) and table question
+answering (Pasupat and Liang, 2015), and table-to-
+text generation (Novikova et al., 2017), etc.
+In this paper, we systematically evaluate model
+performance on tabular data for both textual LLMs
+and multi-modal LLMs. Specifically, we investi-
+gate several research questions, including the ef-
+fectiveness of image-based representation of tab-
+ular data and how different text-based or image-
+based prompt methods affect LLMs’ performance
+on table-related tasks. In addition, we provide anal-
+ysis and hypothesis of LLMs’ behaviors. Our find-
+ings include:
+• LLMs maintain decent performance when we
+use image-based table representations. Some-
+times, image-based table representations can
+make LLMs perform better.
+• There are nuances in the prompting design for
+table-related tasks, revealed by our comparisons
+of various prompting methods for text- and
+image-based table representations.
+To the best of our knowledge, we are the first to
+study how LLMs perform with image-based table
+representations. We believe this paper draws new
+insights into optimizing table-based information
+processing.
+Text-Based
+Image-Based
+Task Specific Prompt
+Output
+TableQA
+TableQA
+Vanilla-T
+Row-Identifier
+Bracket
+Column-JSON
+Row-JSON
+
+1. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+
+2. 3. For the proportion Z test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, WikiTQ
+(Figure 3).
+C Research Questions Cont’d
+C.1 RQ1 Cont’d. Can we use image-based
+representations of tabular data?
+Figure 9 and Figure 10 show the performance com-
+parison between feeding text representations versus
+image representations of the table to GPT-4 and
+Geminipro for chain-of-thought and expert prompt-
+ing, respectively. The results resemble similar
+trends as Figure 3.
+C.2 RQ2 Cont’d. How do different text-based
+prompt methods affect LLMs’
+performance on tabular-related tasks?
+Table 8 reports the averaged accuracy scores across
+FinQA, LogicNLG, TabFact and WikiTQ that use
+accuracy as the metric. Table 9 and Table 11 re-
+port the ROUGE-L scores of LLMs’ generation on
+E2E and ToTTo dataset, respectively. Table 10 re-
+ports the scores annotated manually by the authors.
+As discussed in Section 3.4, the authors manually
+check whether the generated sentence captures all
+the information from the table and does not include
+any additional or misinformation. We assign “1”
+for sentences who satisfy the criteria and “0” other-
+wise.
+GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+Vanilla-T
+V 52.5 E 51.0 CoT 60.3 37.1 28.8 35.3 42.7
+63.8 39.5 29.0 35.1 46.7
+55.2 62.6 53.5 32.1 37.6 48.3
+Bracket
+V 50.9 E 47.9 CoT 60.1 38.4 28.4 36.6 42.2
+62.8 39.5 28.1 34.5 45.8
+51.4 61.9 57.3 34.2 39.3 50.0
+Column-JSON
+V 48.3 E 48.8 CoT 59.5 32.6 24.9 28.8 39.2
+62.8 34.0 26.4 28.2 42.5
+51.2 59.6 53.6 28.0 34.8 42.8
+Row-JSON
+V 49.7 E 53.7 CoT 62.3 41.2 27.9 32.6 40.9
+63.8 39.4 26.4 31.6 45.4
+53.3 62.0 52.1 31.0 35.7 48.4
+Row-Identifier
+V 52.0 E 53.2 CoT 61.2 38.6 27.9 38.5 43.2
+63.0 38.2 26.1 34.0 41.8
+51.6 62.1 56.5 30.6 33.0 45.9
+Table 8: For text-based table representations, averaged
+accuracy scores across FinQA, LogicNLG, TabFact,
+and WikiTQ for different LLMs. “GMNpro” represents
+Geminipro model, “V”, “E”, and “CoT” represent vanilla,
+expert and chain-of-thought prompting, respectively.
+C.3 RQ3 Cont’d. How do different
+image-based prompt methods affect
+LLMs’ performance on tabular-related
+tasks?
+Tables 12 and 13 report the ROUGE-L scores of
+GPT-4 and Geminipro when we use image repre-
+sentations of tables on E2E and ToTTo dataset,
+respectively. Table 14 reports the scores annotated
+manually by the authors.
+C.4 RQ5: Can These LLMs reconstruct
+tables from the image?
+Test: We conduct experiments to explore table re-
+construction ideas using GPT4 on E2E and FinQA
+datasets.
+TL;DR Answer: Mostly yes.
+Full Answer: GPT4 successfully reconstructs
+97/100 tables on the E2E dataset, and 72/100 tables
+on the FinQA dataset. We notice that for simpler ta-
+bles, GPT4 can reconstruct tables almost perfectly.
+For instance, in E2E, the only “mistake” the model
+makes is to output “é” instead of “e” in “Rainbow
+Vegetarian Café”.
+GPT4 also demonstrates a decent capability of
+reconstructing complicated tables. On FinQA,
+80
+60
+40
+20
+0
+56.5
+59.2
+80.0
+71.4
+63.8
+--End Context
+
+The main objectives of the study on Table Information Seeking (TIS) in Large Language Models (LLMs) include investigating the effectiveness of various LLMs in interpreting tabular data using different prompting strategies and data formats. The study analyzes the performance of models on six benchmarks for table-related tasks such as question-answering and fact-checking. A key aspect of the research is the novel assessment of LLMs’ performance on image-based table representations, in addition to text-based representations. The study aims to provide insights into optimizing LLMs for table-related tasks, including examining the effectiveness of different representations and prompting methods on LLM performance in processing tabular data [1].---Begin Question
+How does the newly introduced benchmark, TabIS, differ from previous evaluation methods for table information extraction?, 
+--End Question --Begin Context
+53.0 54.1 50.0
+46.0 46.3
+47.0 52.1
+41.3
+58.0
+65.0
+36.0 44.5
+45.5
+44.6 43.5
+38.0
+38.3 43.4
+21.1
+GMNpro(T)
+GMNpro(V)
+GPT-4 (T)
+GPT-4 (V)
+FinQA LogicNLG TabFact WikiTQ E2E Totto
+Figure 9: Performance comparison between passing the text versus image representations of tables to GPT-4 and
+GeminiPro across FinQA, LogicNLG, TabFact, and WikiTQ by accuracy, and E2E and ToTTo by ROUGE-L scores.
+We use the linearized table (Vanilla-T) as the text-based representation, the original table image (Vanilla-V) as the
+image-based representation, and CoT prompting.
+80
+60
+40
+20
+0
+64.0
+56.0
+72.0 77.0
+58.2 63.0
+29.0 33.0 52.0 54.1
+53.0
+30.1
+31.7
+45.3
+44.9 42.8
+42.4
+45.0
+42.3
+39.2
+35.9
+35.6
+35.0 28.0
+GMNpro(T)
+GMNpro(V)
+GPT-4 (T)
+GPT-4 (V)
+FinQA LogicNLG TabFact WikiTQ E2E Totto
+Figure 10: Performance comparison between passing the text versus image representations of tables to GPT-4 and
+GeminiPro across FinQA, LogicNLG, TabFact, and WikiTQ by accuracy, and E2E and ToTTo by ROUGE-L scores.
+We use the linearized table (Vanilla-T) as the text-based representation, the original table image (Vanilla-V) as the
+image-based representation, and expert prompting.
+GPT-4 manages to reconstruct a 4-row×10-column
+table with over 100 words (Table 16).
+But GPT-4 is more prone to hallucination or
+messing up with the spatial relations when the table
+gets more complicated. For instance, for Table 17,
+GPT-4 reconstructs it as Table 18. As expected,
+GPT-4 fails to answer the corresponding question
+to this table when using a table image as the in-
+put. However, we notice that when using the text
+representation of the table, GPT-4 also fails to an-
+swer this question. This aligns with what we have
+reported in.
+As expected, GPT-4 fails to answer the corre-
+sponding question to this table when using a table
+image as the input. However, we notice that when
+using the text representation of the table, GPT-4
+also fails to answer this question. This aligns with
+what we have reported in Figure 3 that On FinQA,
+GPT-4 better leverages the image representations
+than the text representations in general.
+C.5 RQ6: Do multimodal LLMs benefit from
+having both formats simultaneously as
+input?
+Test: the six datasets.
+We test GPT-4 with vanilla prompting for
+TL;DR Answer: Not generally true.
+Full Answer: As shown in Table 19, it is not
+generally true that multimodal LLMs benefit from
+having both formats simultaneously as input.
+There are cases where passing both image and
+text representations would increase the perfor-
+mance (e.g. GPT-4 on WikiTQ and FinQA). In
+other cases, the performance is comparable to ei-
+ther passing tables as text or image representation
+or lies in between.
+D Comparison of Llama Models and
+GPT-4 Models
+Table 20 provides the details of what combina-
+tion of table representation and prompting method
+yields the best performance with respect to the
+Llama-70B and GPT-4 models.
+E Prompt Examples
+Figure 11 gives an example of how we construct
+our prompt for an instance in WikiTQ.
+F LLMs’ Generation Examples on Each
+Dataset
+Figure 12 gives examples for WikiTQA, TabFact,
+LogicNLG, and FinQA datasets we use, how many
+combinations of LLMs, table representations, and
+prompting techniques can answer the question cor-
+District Location Communities served
+Agape Christian Academy Burton Township, Ohio and Troy Township, Ohio Accepts applications prior to the start of each school year
+…
+Question: where is saint anslem school located?
+District Location Communities served
+
+1. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+
+2. 3. For the proportion Z test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, WikiTQ
+(Figure 3).
+C Research Questions Cont’d
+C.1 RQ1 Cont’d. Can we use image-based
+representations of tabular data?
+Figure 9 and Figure 10 show the performance com-
+parison between feeding text representations versus
+image representations of the table to GPT-4 and
+Geminipro for chain-of-thought and expert prompt-
+ing, respectively. The results resemble similar
+trends as Figure 3.
+C.2 RQ2 Cont’d. How do different text-based
+prompt methods affect LLMs’
+performance on tabular-related tasks?
+Table 8 reports the averaged accuracy scores across
+FinQA, LogicNLG, TabFact and WikiTQ that use
+accuracy as the metric. Table 9 and Table 11 re-
+port the ROUGE-L scores of LLMs’ generation on
+E2E and ToTTo dataset, respectively. Table 10 re-
+ports the scores annotated manually by the authors.
+As discussed in Section 3.4, the authors manually
+check whether the generated sentence captures all
+the information from the table and does not include
+any additional or misinformation. We assign “1”
+for sentences who satisfy the criteria and “0” other-
+wise.
+GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+Vanilla-T
+V 52.5 E 51.0 CoT 60.3 37.1 28.8 35.3 42.7
+63.8 39.5 29.0 35.1 46.7
+55.2 62.6 53.5 32.1 37.6 48.3
+Bracket
+V 50.9 E 47.9 CoT 60.1 38.4 28.4 36.6 42.2
+62.8 39.5 28.1 34.5 45.8
+51.4 61.9 57.3 34.2 39.3 50.0
+Column-JSON
+V 48.3 E 48.8 CoT 59.5 32.6 24.9 28.8 39.2
+62.8 34.0 26.4 28.2 42.5
+51.2 59.6 53.6 28.0 34.8 42.8
+Row-JSON
+V 49.7 E 53.7 CoT 62.3 41.2 27.9 32.6 40.9
+63.8 39.4 26.4 31.6 45.4
+53.3 62.0 52.1 31.0 35.7 48.4
+Row-Identifier
+V 52.0 E 53.2 CoT 61.2 38.6 27.9 38.5 43.2
+63.0 38.2 26.1 34.0 41.8
+51.6 62.1 56.5 30.6 33.0 45.9
+Table 8: For text-based table representations, averaged
+accuracy scores across FinQA, LogicNLG, TabFact,
+and WikiTQ for different LLMs. “GMNpro” represents
+Geminipro model, “V”, “E”, and “CoT” represent vanilla,
+expert and chain-of-thought prompting, respectively.
+C.3 RQ3 Cont’d. How do different
+image-based prompt methods affect
+LLMs’ performance on tabular-related
+tasks?
+Tables 12 and 13 report the ROUGE-L scores of
+GPT-4 and Geminipro when we use image repre-
+sentations of tables on E2E and ToTTo dataset,
+respectively. Table 14 reports the scores annotated
+manually by the authors.
+C.4 RQ5: Can These LLMs reconstruct
+tables from the image?
+Test: We conduct experiments to explore table re-
+construction ideas using GPT4 on E2E and FinQA
+datasets.
+TL;DR Answer: Mostly yes.
+Full Answer: GPT4 successfully reconstructs
+97/100 tables on the E2E dataset, and 72/100 tables
+on the FinQA dataset. We notice that for simpler ta-
+bles, GPT4 can reconstruct tables almost perfectly.
+For instance, in E2E, the only “mistake” the model
+makes is to output “é” instead of “e” in “Rainbow
+Vegetarian Café”.
+GPT4 also demonstrates a decent capability of
+reconstructing complicated tables. On FinQA,
+80
+60
+40
+20
+0
+56.5
+59.2
+80.0
+71.4
+63.8
+--End Context
+
+The newly introduced benchmark, TabIS, differs from previous evaluation methods for table information extraction primarily by focusing on the combined evaluation of both text-based and image-based table representations. Unlike earlier methods that may have assessed either text or images in isolation, TabIS allows for the exploration of how these different representations can be utilized concurrently to assess their impact on the performance of LLMs. This benchmark aims to comprehensively evaluate the ability of large language models to process and understand tabular data in various formats, thereby providing a more holistic view of their capabilities in table information extraction tasks [2].---Begin Question
+What were the performance results of various LLMs tested using the TabIS benchmark, particularly regarding their understanding of table structures?
+
+--End Question --Begin Context
+arXiv:2402.12424v5 [cs.LG] 17 Oct 2024
+Tables as Texts or Images:
+Evaluating the Table Reasoning Ability of LLMs and MLLMs
+Naihao Deng* , Zhenjie Sun* , Ruiqi He , Aman Sikka ,
+Yulong Chen , Lin Ma , Yue Zhang , Rada Mihalcea
+University of Michigan University of Cambridge Westlake University
+{dnaihao, zjsun}@umich.edu
+Abstract
+In this paper, we investigate the effectiveness
+of various LLMs in interpreting tabular data
+through different prompting strategies and data
+formats. Our analyses extend across six bench-
+marks for table-related tasks such as question-
+answering and fact-checking. We introduce
+for the first time the assessment of LLMs’
+performance on image-based table represen-
+tations. Specifically, we compare five text-
+based and three image-based table represen-
+tations, demonstrating the role of representa-
+tion and prompting on LLM performance. Our
+study provides insights into the effective use
+of LLMs on table-related tasks. Our data is
+available at: https://github.com/dnaihao/
+Tables-as-Texts-or-Images.
+1 Introduction
+Recent years have witnessed an explosion of Large
+Language Models (LLMs), with impressive per-
+formance on various Natural Language Processing
+(NLP) tasks (Brown et al., 2020; Touvron et al.,
+2023; Team et al., 2023). Research to date has
+examined the performance of LLMs for various
+aspects and abilities (Bang et al., 2023b; Bubeck
+et al., 2023; Akter et al., 2023), but their effec-
+tiveness on structured data such as tables is less
+explored.
+Unlike unstructured text, tables are systemat-
+ically organized structures of a large amount of
+information. This characteristic makes tabular
+data serve as the foundations for numerous ap-
+plications, including medical diagnostics, virtual
+personal assistants, customer relationship manage-
+ment (Hemphill et al., 1990; Dahl et al., 1994;
+Akhtar et al., 2022; Xie et al., 2022), etc.
+The evaluation of LLMs on processing tabular
+data involves many challenges. First, there are
+many ways to represent the information in tables.
+*Contributed equally to this work. Appendix A lists the
+detailed contributions.
+If we represent the table in pure text, we may use
+naive linearization or insert brackets to better rep-
+resent table structures. Meanwhile, emerging mul-
+timodal LLMs like GPT-4 (Achiam et al., 2023)
+and Gemini (Team et al., 2023) offer image-based
+approaches, where we can pass the table as im-
+ages to the LLMs. In such cases, visual cues like
+color highlighting in tables can influence outcomes.
+Second, diverse prompting methods for text may
+also apply to tabular data, which can yield varied
+results (Wei et al., 2022). Furthermore, the tasks
+involving tabular data are diverse, including table
+fact-checking (Chen et al., 2019) and table question
+answering (Pasupat and Liang, 2015), and table-to-
+text generation (Novikova et al., 2017), etc.
+In this paper, we systematically evaluate model
+performance on tabular data for both textual LLMs
+and multi-modal LLMs. Specifically, we investi-
+gate several research questions, including the ef-
+fectiveness of image-based representation of tab-
+ular data and how different text-based or image-
+based prompt methods affect LLMs’ performance
+on table-related tasks. In addition, we provide anal-
+ysis and hypothesis of LLMs’ behaviors. Our find-
+ings include:
+• LLMs maintain decent performance when we
+use image-based table representations. Some-
+times, image-based table representations can
+make LLMs perform better.
+• There are nuances in the prompting design for
+table-related tasks, revealed by our comparisons
+of various prompting methods for text- and
+image-based table representations.
+To the best of our knowledge, we are the first to
+study how LLMs perform with image-based table
+representations. We believe this paper draws new
+insights into optimizing table-based information
+processing.
+Text-Based
+Image-Based
+Task Specific Prompt
+Output
+TableQA
+TableQA
+Vanilla-T
+Row-Identifier
+Bracket
+Column-JSON
+Row-JSON
+
+1. 3. For the proportion Z test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, WikiTQ
+(Figure 3).
+C Research Questions Cont’d
+C.1 RQ1 Cont’d. Can we use image-based
+representations of tabular data?
+Figure 9 and Figure 10 show the performance com-
+parison between feeding text representations versus
+image representations of the table to GPT-4 and
+Geminipro for chain-of-thought and expert prompt-
+ing, respectively. The results resemble similar
+trends as Figure 3.
+C.2 RQ2 Cont’d. How do different text-based
+prompt methods affect LLMs’
+performance on tabular-related tasks?
+Table 8 reports the averaged accuracy scores across
+FinQA, LogicNLG, TabFact and WikiTQ that use
+accuracy as the metric. Table 9 and Table 11 re-
+port the ROUGE-L scores of LLMs’ generation on
+E2E and ToTTo dataset, respectively. Table 10 re-
+ports the scores annotated manually by the authors.
+As discussed in Section 3.4, the authors manually
+check whether the generated sentence captures all
+the information from the table and does not include
+any additional or misinformation. We assign “1”
+for sentences who satisfy the criteria and “0” other-
+wise.
+GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+Vanilla-T
+V 52.5 E 51.0 CoT 60.3 37.1 28.8 35.3 42.7
+63.8 39.5 29.0 35.1 46.7
+55.2 62.6 53.5 32.1 37.6 48.3
+Bracket
+V 50.9 E 47.9 CoT 60.1 38.4 28.4 36.6 42.2
+62.8 39.5 28.1 34.5 45.8
+51.4 61.9 57.3 34.2 39.3 50.0
+Column-JSON
+V 48.3 E 48.8 CoT 59.5 32.6 24.9 28.8 39.2
+62.8 34.0 26.4 28.2 42.5
+51.2 59.6 53.6 28.0 34.8 42.8
+Row-JSON
+V 49.7 E 53.7 CoT 62.3 41.2 27.9 32.6 40.9
+63.8 39.4 26.4 31.6 45.4
+53.3 62.0 52.1 31.0 35.7 48.4
+Row-Identifier
+V 52.0 E 53.2 CoT 61.2 38.6 27.9 38.5 43.2
+63.0 38.2 26.1 34.0 41.8
+51.6 62.1 56.5 30.6 33.0 45.9
+Table 8: For text-based table representations, averaged
+accuracy scores across FinQA, LogicNLG, TabFact,
+and WikiTQ for different LLMs. “GMNpro” represents
+Geminipro model, “V”, “E”, and “CoT” represent vanilla,
+expert and chain-of-thought prompting, respectively.
+C.3 RQ3 Cont’d. How do different
+image-based prompt methods affect
+LLMs’ performance on tabular-related
+tasks?
+Tables 12 and 13 report the ROUGE-L scores of
+GPT-4 and Geminipro when we use image repre-
+sentations of tables on E2E and ToTTo dataset,
+respectively. Table 14 reports the scores annotated
+manually by the authors.
+C.4 RQ5: Can These LLMs reconstruct
+tables from the image?
+Test: We conduct experiments to explore table re-
+construction ideas using GPT4 on E2E and FinQA
+datasets.
+TL;DR Answer: Mostly yes.
+Full Answer: GPT4 successfully reconstructs
+97/100 tables on the E2E dataset, and 72/100 tables
+on the FinQA dataset. We notice that for simpler ta-
+bles, GPT4 can reconstruct tables almost perfectly.
+For instance, in E2E, the only “mistake” the model
+makes is to output “é” instead of “e” in “Rainbow
+Vegetarian Café”.
+GPT4 also demonstrates a decent capability of
+reconstructing complicated tables. On FinQA,
+80
+60
+40
+20
+0
+56.5
+59.2
+80.0
+71.4
+63.8
+
+2. achieve a decent performance (52.5% and 60.3%
+respectively using the vanilla prompting and lin-
+earized table representation from Table 4), demon-
+strating their strong table understanding abilities.
+In such cases, brackets or other kinds of table repre-
+sentations may add extra “workload” to the model,
+which dilutes the models’ attention to the original
+table content and thus leads to worse performance.
+RQ3. How do different image-based prompt
+methods affect LLMs’ performance on
+table-related tasks?
+Test: We test the three image-based table rep-
+resentations in Section 3.2 together with vanilla,
+chain-of-thought, and expert prompting. We test
+the Geminipro and GPT-4 model which can take im-
+ages as the input. We average the accuracy scores
+across FinQA, LogicNLG, TabFact, and WikiTQ.
+Appendix C.3 reports LLMs’ performance on E2E
+and ToTTo datasets.
+TL;DR Answer 3.1: CoT prompting helps
+LLMs reason over images of the table.
+Full Answer 3.1: In Table 5, we observe
+that chain-of-thought prompting helps multimodal
+LLMs in all image-based table representations. For
+instance, when using different colors to distinguish
+rows in the table (Row-Color), the average accu-
+racy score for GPT-4 improves from 51.8% by
+vanilla prompting to 60.2% by chain-of-thought
+prompting. By explicitly outlining the reason-
+ing process, chain-of-thought prompting may help
+LLMs better understand the context and relation-
+ships between different rows and columns in the
+table, therefore better aligning this visual informa-
+tion with the question text. Such consistent perfor-
+mance improvements suggest that chain-of-thought
+prompting may enhance information fusion across
+the text and vision modality.
+TL;DR Answer 3.2: Distinguishing rows may
+lead to better performance for LLMs to reason
+over images of the table.
+Full Answer 3.2: In Table 5, under CoT prompt-
+ing, GPT4 performs slightly better when using col-
+ors to distinguish different rows, which also yields
+the overall best performance using images of the
+table. In contrast, under CoT prompting, using
+colors to distinguish columns yields similar perfor-
+mance to vanilla image (58.0% to 57.8% for GPT-4
+and 45.1% to 46.0% for Geminipro), suggesting
+that these advanced LLMs may not capture row
+information as well as column information.
+Figure 6 shows a WikiTQ example with
+Geminipro model’s predictions. Since the question
+asks about the number of games, it requires the
+model to count how many rows satisfy such a con-
+dition. Using colors to distinguish rows may help
+models visually segment and categorize the data.
+This visual differentiation may act as a cognitive
+aid, which reduces the complexity of parsing and
+interpreting the tabular data.
+TL;DR Answer 3.3: The more capable LLM
+does not necessarily benefit more from the col-
+ored images.
+Full Answer 3.3: In addition, if we use the
+vanilla prompt, the different coloring methods may
+even hurt the performance of GPT-4 (for GPT-4,
+coloring rows with different colors yields 51.8%
+compared to 56.2% without adding any color), but
+helpful for Geminipro (for Geminipro, coloring rows
+with different colors yields 39.4% compared to
+36.8% without adding any color). This suggests
+that the effectiveness of how different LLMs can
+leverage colored images varies, and does not de-
+pend on the model’s overall performance.
+Rep Cues GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+T N/A T T V N/A V T V V V V+T 34 43 21 10 20 41
+30 51 25 14 16 37
+- 57 30 - 58 34 - 57 28 - 61 38 - - -
+- - -
+- - -
+- - -
+Table 6: Accuracy scores of LLMs on FinQA. We
+use vanilla prompting across experiments in this table.
+GMNpro represents Geminipro model. We denote text
+and image-based table representations as “T” and “V”
+in the “Rep” column, respectively. The “Cues” column
+indicates how we highlight the relevant cells, where
+“N/A” indicates no information about relevant cells, “T”
+indicates referring to relevant cells in the text, “V” in-
+--End Context
+
+The performance results of various LLMs tested using the TabIS benchmark indicate that models like GPT-4 and Geminipro manage to achieve decent performance levels when understanding table structures. For instance, GPT-4 shows accuracy rates of 52.5% when using vanilla prompting with text-based representations, and 60.3% when utilizing the chain-of-thought (CoT) prompting method with linearized table representation. Similarly, the effectiveness of their understanding is demonstrated through the performance variations observed across different prompting methods and representations, underscoring their strong abilities in table comprehension tasks [1]. 
+
+Additional findings highlight that chain-of-thought prompting generally assists LLMs in reasoning over image-based tables, with GPT-4 achieving an accuracy improvement from 51.8% with vanilla prompting to 60.2% with CoT prompting when colors were used to distinguish rows in images [2]. This suggests that effective prompting strategies can significantly enhance the models' understanding of table layouts and the relationships between data points.---Begin Question
+Who are the authors of the paper?
+--End Question --Begin Context
+Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+
+1. Josh Achiam, Steven Adler, Sandhini Agarwal, Lama
+Ahmad, Ilge Akkaya, Florencia Leoni Aleman,
+Diogo Almeida, Janko Altenschmidt, Sam Altman,
+Shyamal Anadkat, et al. 2023. Gpt-4 technical report.
+arXiv preprint arXiv:2303.08774.
+Mubashara Akhtar, Oana Cocarascu, and Elena Simperl.
+2022. PubHealthTab: A public health table-based
+dataset for evidence-based fact checking. In Find-
+ings of the Association for Computational Linguistics:
+NAACL 2022, pages 1–16, Seattle, United States. As-
+sociation for Computational Linguistics.
+Syeda Nahida Akter, Zichun Yu, Aashiq Muhamed,
+Tianyue Ou, Alex Bäuerle, Ángel Alexander Cabrera,
+Krish Dholakia, Chenyan Xiong, and Graham Neu-
+big. 2023. An in-depth look at gemini’s language
+abilities. arXiv preprint arXiv:2312.11444.
+Hyojin Bahng, Ali Jahanian, Swami Sankaranarayanan,
+and Phillip Isola. 2022. Exploring visual prompts
+for adapting large-scale models. arXiv preprint
+arXiv:2203.17274.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, Quyet V. Do, Yan Xu,
+and Pascale Fung. 2023a. A multitask, multilingual,
+multimodal evaluation of ChatGPT on reasoning, hal-
+lucination, and interactivity. In Proceedings of the
+13th International Joint Conference on Natural Lan-
+guage Processing and the 3rd Conference of the Asia-
+Pacific Chapter of the Association for Computational
+Linguistics (Volume 1: Long Papers), pages 675–718,
+Nusa Dua, Bali. Association for Computational Lin-
+guistics.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, et al. 2023b. A multi-
+task, multilingual, multimodal evaluation of chatgpt
+on reasoning, hallucination, and interactivity. arXiv
+preprint arXiv:2302.04023.
+Emily M Bender, Timnit Gebru, Angelina McMillan-
+Major, and Shmargaret Shmitchell. 2021. On the
+dangers of stochastic parrots: Can language models
+be too big? In Proceedings of the 2021 ACM confer-
+ence on fairness, accountability, and transparency,
+pages 610–623.
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, et al. 2020. Language models are few-shot
+learners. Advances in neural information processing
+systems, 33:1877–1901.
+Sébastien Bubeck, Varun Chandrasekaran, Ronen El-
+dan, Johannes Gehrke, Eric Horvitz, Ece Kamar,
+Peter Lee, Yin Tat Lee, Yuanzhi Li, Scott Lund-
+berg, et al. 2023. Sparks of artificial general intelli-
+gence: Early experiments with gpt-4. arXiv preprint
+arXiv:2303.12712.
+Miao Chen, Xinjiang Lu, Tong Xu, Yanyan Li, Zhou
+Jingbo, Dejing Dou, and Hui Xiong. 2022. To-
+wards table-to-text generation with pretrained lan-
+guage model: A table structure understanding and
+text deliberating approach. In Proceedings of the
+2022 Conference on Empirical Methods in Natu-
+ral Language Processing, pages 8199–8210, Abu
+Dhabi, United Arab Emirates. Association for Com-
+putational Linguistics.
+
+2. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+--End Context
+
+The authors of the paper titled "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" are Naihao Deng, Zhenjie Sun, Ruiqi He, Aman Sikka, Yulong Chen, Lin Ma, Yue Zhang, and Rada Mihalcea [1].---Begin Question
+What is the title of the paper?
+--End Question --Begin Context
+42, Toronto, Canada. Association for Computational
+Linguistics.
+Zhijing Jin, Sydney Levine, Fernando Gonzalez Adauto,
+Ojasv Kamal, Maarten Sap, Mrinmaya Sachan, Rada
+Mihalcea, Josh Tenenbaum, and Bernhard Schölkopf.
+2022. When to make exceptions: Exploring language
+models as accounts of human moral judgment. In
+Advances in Neural Information Processing Systems,
+volume 35, pages 28458–28473. Curran Associates,
+Inc.
+Pengfei Liu, Weizhe Yuan, Jinlan Fu, Zhengbao Jiang,
+Hiroaki Hayashi, and Graham Neubig. 2023. Pre-
+train, prompt, and predict: A systematic survey of
+prompting methods in natural language processing.
+ACM Computing Surveys, 55(9):1–35.
+Qian Liu, Bei Chen, Jiaqi Guo, Morteza Ziyadi, Zeqi
+Lin, Weizhu Chen, and Jian-Guang Lou. 2021.
+Tapex: Table pre-training via learning a neural sql
+executor. arXiv preprint arXiv:2107.07653.
+Jekaterina Novikova, Ondˇ rej Dušek, and Verena Rieser.
+2017. The E2E dataset: New challenges for end-
+to-end generation. In Proceedings of the 18th An-
+nual SIGdial Meeting on Discourse and Dialogue,
+pages 201–206, Saarbrücken, Germany. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Ankur Parikh, Xuezhi Wang, Sebastian Gehrmann, Man-
+aal Faruqui, Bhuwan Dhingra, Diyi Yang, and Dipan-
+jan Das. 2020. ToTTo: A controlled table-to-text
+generation dataset. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1173–1186, Online. As-
+sociation for Computational Linguistics.
+Panupong Pasupat and Percy Liang. 2015. Composi-
+tional semantic parsing on semi-structured tables. In
+Proceedings of the 53rd Annual Meeting of the As-
+sociation for Computational Linguistics and the 7th
+International Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 1470–
+1480, Beijing, China. Association for Computational
+Linguistics.
+Shuofei Qiao, Yixin Ou, Ningyu Zhang, Xiang Chen,
+Yunzhi Yao, Shumin Deng, Chuanqi Tan, Fei Huang,
+and Huajun Chen. 2022. Reasoning with lan-
+guage model prompting: A survey. arXiv preprint
+arXiv:2212.09597.
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya
+Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-
+try, Amanda Askell, Pamela Mishkin, Jack Clark,
+et al. 2021. Learning transferable visual models from
+natural language supervision. In International confer-
+ence on machine learning, pages 8748–8763. PMLR.
+Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten
+Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi,
+Jingyu Liu, Tal Remez, Jérémy Rapin, et al. 2023.
+Code llama: Open foundation models for code. arXiv
+preprint arXiv:2308.12950.
+Aleksandar Shtedritski, Christian Rupprecht, and An-
+drea Vedaldi. 2023. What does clip know about a red
+circle? visual prompt engineering for vlms. arXiv
+preprint arXiv:2304.06712.
+Gemini Team, Rohan Anil, Sebastian Borgeaud,
+Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu,
+
+1. Josh Achiam, Steven Adler, Sandhini Agarwal, Lama
+Ahmad, Ilge Akkaya, Florencia Leoni Aleman,
+Diogo Almeida, Janko Altenschmidt, Sam Altman,
+Shyamal Anadkat, et al. 2023. Gpt-4 technical report.
+arXiv preprint arXiv:2303.08774.
+Mubashara Akhtar, Oana Cocarascu, and Elena Simperl.
+2022. PubHealthTab: A public health table-based
+dataset for evidence-based fact checking. In Find-
+ings of the Association for Computational Linguistics:
+NAACL 2022, pages 1–16, Seattle, United States. As-
+sociation for Computational Linguistics.
+Syeda Nahida Akter, Zichun Yu, Aashiq Muhamed,
+Tianyue Ou, Alex Bäuerle, Ángel Alexander Cabrera,
+Krish Dholakia, Chenyan Xiong, and Graham Neu-
+big. 2023. An in-depth look at gemini’s language
+abilities. arXiv preprint arXiv:2312.11444.
+Hyojin Bahng, Ali Jahanian, Swami Sankaranarayanan,
+and Phillip Isola. 2022. Exploring visual prompts
+for adapting large-scale models. arXiv preprint
+arXiv:2203.17274.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, Quyet V. Do, Yan Xu,
+and Pascale Fung. 2023a. A multitask, multilingual,
+multimodal evaluation of ChatGPT on reasoning, hal-
+lucination, and interactivity. In Proceedings of the
+13th International Joint Conference on Natural Lan-
+guage Processing and the 3rd Conference of the Asia-
+Pacific Chapter of the Association for Computational
+Linguistics (Volume 1: Long Papers), pages 675–718,
+Nusa Dua, Bali. Association for Computational Lin-
+guistics.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, et al. 2023b. A multi-
+task, multilingual, multimodal evaluation of chatgpt
+on reasoning, hallucination, and interactivity. arXiv
+preprint arXiv:2302.04023.
+Emily M Bender, Timnit Gebru, Angelina McMillan-
+Major, and Shmargaret Shmitchell. 2021. On the
+dangers of stochastic parrots: Can language models
+be too big? In Proceedings of the 2021 ACM confer-
+ence on fairness, accountability, and transparency,
+pages 610–623.
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, et al. 2020. Language models are few-shot
+learners. Advances in neural information processing
+systems, 33:1877–1901.
+Sébastien Bubeck, Varun Chandrasekaran, Ronen El-
+dan, Johannes Gehrke, Eric Horvitz, Ece Kamar,
+Peter Lee, Yin Tat Lee, Yuanzhi Li, Scott Lund-
+berg, et al. 2023. Sparks of artificial general intelli-
+gence: Early experiments with gpt-4. arXiv preprint
+arXiv:2303.12712.
+Miao Chen, Xinjiang Lu, Tong Xu, Yanyan Li, Zhou
+Jingbo, Dejing Dou, and Hui Xiong. 2022. To-
+wards table-to-text generation with pretrained lan-
+guage model: A table structure understanding and
+text deliberating approach. In Proceedings of the
+2022 Conference on Empirical Methods in Natu-
+ral Language Processing, pages 8199–8210, Abu
+Dhabi, United Arab Emirates. Association for Com-
+putational Linguistics.
+
+2. Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+--End Context
+
+The title of the paper is "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" [1].---Begin Question
+What is the abstract of the paper?
+--End Question --Begin Context
+Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+
+1. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+
+2. 42, Toronto, Canada. Association for Computational
+Linguistics.
+Zhijing Jin, Sydney Levine, Fernando Gonzalez Adauto,
+Ojasv Kamal, Maarten Sap, Mrinmaya Sachan, Rada
+Mihalcea, Josh Tenenbaum, and Bernhard Schölkopf.
+2022. When to make exceptions: Exploring language
+models as accounts of human moral judgment. In
+Advances in Neural Information Processing Systems,
+volume 35, pages 28458–28473. Curran Associates,
+Inc.
+Pengfei Liu, Weizhe Yuan, Jinlan Fu, Zhengbao Jiang,
+Hiroaki Hayashi, and Graham Neubig. 2023. Pre-
+train, prompt, and predict: A systematic survey of
+prompting methods in natural language processing.
+ACM Computing Surveys, 55(9):1–35.
+Qian Liu, Bei Chen, Jiaqi Guo, Morteza Ziyadi, Zeqi
+Lin, Weizhu Chen, and Jian-Guang Lou. 2021.
+Tapex: Table pre-training via learning a neural sql
+executor. arXiv preprint arXiv:2107.07653.
+Jekaterina Novikova, Ondˇ rej Dušek, and Verena Rieser.
+2017. The E2E dataset: New challenges for end-
+to-end generation. In Proceedings of the 18th An-
+nual SIGdial Meeting on Discourse and Dialogue,
+pages 201–206, Saarbrücken, Germany. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Ankur Parikh, Xuezhi Wang, Sebastian Gehrmann, Man-
+aal Faruqui, Bhuwan Dhingra, Diyi Yang, and Dipan-
+jan Das. 2020. ToTTo: A controlled table-to-text
+generation dataset. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1173–1186, Online. As-
+sociation for Computational Linguistics.
+Panupong Pasupat and Percy Liang. 2015. Composi-
+tional semantic parsing on semi-structured tables. In
+Proceedings of the 53rd Annual Meeting of the As-
+sociation for Computational Linguistics and the 7th
+International Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 1470–
+1480, Beijing, China. Association for Computational
+Linguistics.
+Shuofei Qiao, Yixin Ou, Ningyu Zhang, Xiang Chen,
+Yunzhi Yao, Shumin Deng, Chuanqi Tan, Fei Huang,
+and Huajun Chen. 2022. Reasoning with lan-
+guage model prompting: A survey. arXiv preprint
+arXiv:2212.09597.
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya
+Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-
+try, Amanda Askell, Pamela Mishkin, Jack Clark,
+et al. 2021. Learning transferable visual models from
+natural language supervision. In International confer-
+ence on machine learning, pages 8748–8763. PMLR.
+Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten
+Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi,
+Jingyu Liu, Tal Remez, Jérémy Rapin, et al. 2023.
+Code llama: Open foundation models for code. arXiv
+preprint arXiv:2308.12950.
+Aleksandar Shtedritski, Christian Rupprecht, and An-
+drea Vedaldi. 2023. What does clip know about a red
+circle? visual prompt engineering for vlms. arXiv
+preprint arXiv:2304.06712.
+Gemini Team, Rohan Anil, Sebastian Borgeaud,
+Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu,
+--End Context
+
+The abstract of the paper titled "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" states that the study investigates the effectiveness of various large language models (LLMs) in interpreting tabular data through different prompting strategies and data formats. It extends analyses across six benchmarks for table-related tasks, such as question-answering and fact-checking. The paper introduces the assessment of LLMs’ performance on image-based table representations for the first time and compares five text-based and three image-based table representations, demonstrating the role of representation and prompting on LLM performance. The study aims to provide insights into effectively utilizing LLMs for table-related tasks [1].---Begin Question
+What is the introduction of the paper?
+--End Question --Begin Context
+Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+
+1. Wu et al., 2023; Zheng et al., 2024). On the con-
+trary, to the best of our knowledge, few works have
+prompted these LLMs on tasks involving tabular
+data.
+For closed-source LLMs, researchers adopt hard
+prompts to manually craft text prompts with dis-
+crete tokens (Qiao et al., 2022; Bahng et al., 2022;
+Liu et al., 2023). Wei et al. (2022) develop chain-
+of-though prompting, Xu et al. (2023a) develop
+expert prompting. In our work, we include the
+comparison between vanilla, chain-of-thought, and
+expert prompting for LLMs on table-related tasks.
+3 Experiment Setups
+3.1 Experimented LLMs
+Table 1 describes the LLMs we use for our experi-
+ments. We use closed-source models such as GPT-
+3.5 and GPT-4 (Brown et al., 2020; Ouyang et al.,
+2022), and Gemini (Team et al., 2023). We note
+that GPT-4 and Gemini are multimodal models,
+which can take tables as images. For open-source
+models, we use the chat models from Llama-2 (Tou-
+vron et al., 2023) families from the 7 billion to the
+70 billion parameter version as they are claimed
+to perform on par with closed-source models like
+ChatGPT.*
+*https://huggingface.co/meta-Llama/Llama-2-70b-chat
+Method Name Table Representation
+Vanilla-T c1, c2, · · · , cn, v(1,1), v(1,2), · · · , v(1,n), v(2,1), v(2,2),
+· · · , v(2,n), · · · , v(m,1), v(m,2), · · · , v(m,n).
+Row-Identifier
+c1, c2, · · · , cn, [ROW1] v(1,1), v(1,2), · · · , v(1,n),
+[ROW2] v(2,1), v(2,2), · · · , v(2,n), · · · , [ROWm]
+v(m,1), v(m,2), · · · , v(m,n).
+Bracket [ [c1, c2, · · · , cn], [v(1,1), v(1,2), · · · , v(1,n)], [v(2,1),
+v(2,2), · · · , v(2,n)], · · · , [v(m,1), v(m,2), · · · , v(m,n)]].
+Column-JSON { c1: [v(1,1), v(2,1), · · · , v(m,1)], c2: [v(1,2), v(2,2), · · ·
+, v(m,2)], · · · , c
+n: [v(1,n), v(2,n), · · · , v(m,n)] }.
+Row-JSON
+[{ Row: 1, c1: v(1,1), c2: v(1,2), · · · , c
+n
+: v(1,n)}, { Row: 2,
+c1: v(2,1), c2: v(2,2), · · · , c
+n
+: v(2,n) }, · · · , { Row: m, c1:
+v(m,1), c2: v(m,2), · · · , c
+n
+: v(m,n) }].
+Table 2: Text-based table representation examples. We
+construct the examples assuming a table of m rows
+and n columns, where ci denotes the column name of
+column i and v(i,j) denotes the cell value at row i and
+column j. We use colored text to indicate different rows
+in the table to assist readers.
+3.2 Prompting Strategies
+We explore two ways to represent tables in the
+prompt, Text-Based and Image-Based.
+
+2. 42, Toronto, Canada. Association for Computational
+Linguistics.
+Zhijing Jin, Sydney Levine, Fernando Gonzalez Adauto,
+Ojasv Kamal, Maarten Sap, Mrinmaya Sachan, Rada
+Mihalcea, Josh Tenenbaum, and Bernhard Schölkopf.
+2022. When to make exceptions: Exploring language
+models as accounts of human moral judgment. In
+Advances in Neural Information Processing Systems,
+volume 35, pages 28458–28473. Curran Associates,
+Inc.
+Pengfei Liu, Weizhe Yuan, Jinlan Fu, Zhengbao Jiang,
+Hiroaki Hayashi, and Graham Neubig. 2023. Pre-
+train, prompt, and predict: A systematic survey of
+prompting methods in natural language processing.
+ACM Computing Surveys, 55(9):1–35.
+Qian Liu, Bei Chen, Jiaqi Guo, Morteza Ziyadi, Zeqi
+Lin, Weizhu Chen, and Jian-Guang Lou. 2021.
+Tapex: Table pre-training via learning a neural sql
+executor. arXiv preprint arXiv:2107.07653.
+Jekaterina Novikova, Ondˇ rej Dušek, and Verena Rieser.
+2017. The E2E dataset: New challenges for end-
+to-end generation. In Proceedings of the 18th An-
+nual SIGdial Meeting on Discourse and Dialogue,
+pages 201–206, Saarbrücken, Germany. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Ankur Parikh, Xuezhi Wang, Sebastian Gehrmann, Man-
+aal Faruqui, Bhuwan Dhingra, Diyi Yang, and Dipan-
+jan Das. 2020. ToTTo: A controlled table-to-text
+generation dataset. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1173–1186, Online. As-
+sociation for Computational Linguistics.
+Panupong Pasupat and Percy Liang. 2015. Composi-
+tional semantic parsing on semi-structured tables. In
+Proceedings of the 53rd Annual Meeting of the As-
+sociation for Computational Linguistics and the 7th
+International Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 1470–
+1480, Beijing, China. Association for Computational
+Linguistics.
+Shuofei Qiao, Yixin Ou, Ningyu Zhang, Xiang Chen,
+Yunzhi Yao, Shumin Deng, Chuanqi Tan, Fei Huang,
+and Huajun Chen. 2022. Reasoning with lan-
+guage model prompting: A survey. arXiv preprint
+arXiv:2212.09597.
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya
+Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-
+try, Amanda Askell, Pamela Mishkin, Jack Clark,
+et al. 2021. Learning transferable visual models from
+natural language supervision. In International confer-
+ence on machine learning, pages 8748–8763. PMLR.
+Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten
+Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi,
+Jingyu Liu, Tal Remez, Jérémy Rapin, et al. 2023.
+Code llama: Open foundation models for code. arXiv
+preprint arXiv:2308.12950.
+Aleksandar Shtedritski, Christian Rupprecht, and An-
+drea Vedaldi. 2023. What does clip know about a red
+circle? visual prompt engineering for vlms. arXiv
+preprint arXiv:2304.06712.
+Gemini Team, Rohan Anil, Sebastian Borgeaud,
+Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu,
+--End Context
+
+The introduction of the paper "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" discusses the rapid growth of Large Language Models (LLMs) and their impressive performance on various Natural Language Processing (NLP) tasks. However, it highlights that the effectiveness of these models on structured data, particularly tabular information, has been less thoroughly explored. Unlike unstructured text, tables represent information in a systematic organization, making them foundational for numerous applications such as medical diagnostics and customer relationship management.
+
+The introduction identifies several challenges in evaluating LLMs' performance with tabular data, such as the multitude of ways to represent table information (like naive linearization or brackets) and the diverse prompting methods applicable to tabular tasks. It establishes the importance of examining model performance on tasks like table fact-checking, question answering, and table-to-text generation, which necessitate a comprehensive understanding of table structures by LLMs. Ultimately, the paper outlines its objective to systematically evaluate various LLMs' performance on tabular information processing using both textual and image representations, while also investigating different prompting strategies to optimize this process [1].---Begin Question
+What is the methodology of the paper?
+--End Question --Begin Context
+3. For the proportion Z test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, WikiTQ
+(Figure 3).
+C Research Questions Cont’d
+C.1 RQ1 Cont’d. Can we use image-based
+representations of tabular data?
+Figure 9 and Figure 10 show the performance com-
+parison between feeding text representations versus
+image representations of the table to GPT-4 and
+Geminipro for chain-of-thought and expert prompt-
+ing, respectively. The results resemble similar
+trends as Figure 3.
+C.2 RQ2 Cont’d. How do different text-based
+prompt methods affect LLMs’
+performance on tabular-related tasks?
+Table 8 reports the averaged accuracy scores across
+FinQA, LogicNLG, TabFact and WikiTQ that use
+accuracy as the metric. Table 9 and Table 11 re-
+port the ROUGE-L scores of LLMs’ generation on
+E2E and ToTTo dataset, respectively. Table 10 re-
+ports the scores annotated manually by the authors.
+As discussed in Section 3.4, the authors manually
+check whether the generated sentence captures all
+the information from the table and does not include
+any additional or misinformation. We assign “1”
+for sentences who satisfy the criteria and “0” other-
+wise.
+GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+Vanilla-T
+V 52.5 E 51.0 CoT 60.3 37.1 28.8 35.3 42.7
+63.8 39.5 29.0 35.1 46.7
+55.2 62.6 53.5 32.1 37.6 48.3
+Bracket
+V 50.9 E 47.9 CoT 60.1 38.4 28.4 36.6 42.2
+62.8 39.5 28.1 34.5 45.8
+51.4 61.9 57.3 34.2 39.3 50.0
+Column-JSON
+V 48.3 E 48.8 CoT 59.5 32.6 24.9 28.8 39.2
+62.8 34.0 26.4 28.2 42.5
+51.2 59.6 53.6 28.0 34.8 42.8
+Row-JSON
+V 49.7 E 53.7 CoT 62.3 41.2 27.9 32.6 40.9
+63.8 39.4 26.4 31.6 45.4
+53.3 62.0 52.1 31.0 35.7 48.4
+Row-Identifier
+V 52.0 E 53.2 CoT 61.2 38.6 27.9 38.5 43.2
+63.0 38.2 26.1 34.0 41.8
+51.6 62.1 56.5 30.6 33.0 45.9
+Table 8: For text-based table representations, averaged
+accuracy scores across FinQA, LogicNLG, TabFact,
+and WikiTQ for different LLMs. “GMNpro” represents
+Geminipro model, “V”, “E”, and “CoT” represent vanilla,
+expert and chain-of-thought prompting, respectively.
+C.3 RQ3 Cont’d. How do different
+image-based prompt methods affect
+LLMs’ performance on tabular-related
+tasks?
+Tables 12 and 13 report the ROUGE-L scores of
+GPT-4 and Geminipro when we use image repre-
+sentations of tables on E2E and ToTTo dataset,
+respectively. Table 14 reports the scores annotated
+manually by the authors.
+C.4 RQ5: Can These LLMs reconstruct
+tables from the image?
+Test: We conduct experiments to explore table re-
+construction ideas using GPT4 on E2E and FinQA
+datasets.
+TL;DR Answer: Mostly yes.
+Full Answer: GPT4 successfully reconstructs
+97/100 tables on the E2E dataset, and 72/100 tables
+on the FinQA dataset. We notice that for simpler ta-
+bles, GPT4 can reconstruct tables almost perfectly.
+For instance, in E2E, the only “mistake” the model
+makes is to output “é” instead of “e” in “Rainbow
+Vegetarian Café”.
+GPT4 also demonstrates a decent capability of
+reconstructing complicated tables. On FinQA,
+80
+60
+40
+20
+0
+56.5
+59.2
+80.0
+71.4
+63.8
+
+1. Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+
+2. 42, Toronto, Canada. Association for Computational
+Linguistics.
+Zhijing Jin, Sydney Levine, Fernando Gonzalez Adauto,
+Ojasv Kamal, Maarten Sap, Mrinmaya Sachan, Rada
+Mihalcea, Josh Tenenbaum, and Bernhard Schölkopf.
+2022. When to make exceptions: Exploring language
+models as accounts of human moral judgment. In
+Advances in Neural Information Processing Systems,
+volume 35, pages 28458–28473. Curran Associates,
+Inc.
+Pengfei Liu, Weizhe Yuan, Jinlan Fu, Zhengbao Jiang,
+Hiroaki Hayashi, and Graham Neubig. 2023. Pre-
+train, prompt, and predict: A systematic survey of
+prompting methods in natural language processing.
+ACM Computing Surveys, 55(9):1–35.
+Qian Liu, Bei Chen, Jiaqi Guo, Morteza Ziyadi, Zeqi
+Lin, Weizhu Chen, and Jian-Guang Lou. 2021.
+Tapex: Table pre-training via learning a neural sql
+executor. arXiv preprint arXiv:2107.07653.
+Jekaterina Novikova, Ondˇ rej Dušek, and Verena Rieser.
+2017. The E2E dataset: New challenges for end-
+to-end generation. In Proceedings of the 18th An-
+nual SIGdial Meeting on Discourse and Dialogue,
+pages 201–206, Saarbrücken, Germany. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Ankur Parikh, Xuezhi Wang, Sebastian Gehrmann, Man-
+aal Faruqui, Bhuwan Dhingra, Diyi Yang, and Dipan-
+jan Das. 2020. ToTTo: A controlled table-to-text
+generation dataset. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1173–1186, Online. As-
+sociation for Computational Linguistics.
+Panupong Pasupat and Percy Liang. 2015. Composi-
+tional semantic parsing on semi-structured tables. In
+Proceedings of the 53rd Annual Meeting of the As-
+sociation for Computational Linguistics and the 7th
+International Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 1470–
+1480, Beijing, China. Association for Computational
+Linguistics.
+Shuofei Qiao, Yixin Ou, Ningyu Zhang, Xiang Chen,
+Yunzhi Yao, Shumin Deng, Chuanqi Tan, Fei Huang,
+and Huajun Chen. 2022. Reasoning with lan-
+guage model prompting: A survey. arXiv preprint
+arXiv:2212.09597.
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya
+Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-
+try, Amanda Askell, Pamela Mishkin, Jack Clark,
+et al. 2021. Learning transferable visual models from
+natural language supervision. In International confer-
+ence on machine learning, pages 8748–8763. PMLR.
+Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten
+Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi,
+Jingyu Liu, Tal Remez, Jérémy Rapin, et al. 2023.
+Code llama: Open foundation models for code. arXiv
+preprint arXiv:2308.12950.
+Aleksandar Shtedritski, Christian Rupprecht, and An-
+drea Vedaldi. 2023. What does clip know about a red
+circle? visual prompt engineering for vlms. arXiv
+preprint arXiv:2304.06712.
+Gemini Team, Rohan Anil, Sebastian Borgeaud,
+Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu,
+--End Context
+
+The methodology of the paper "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" consists of several key components designed to evaluate the performance of different large language models (LLMs) on tabular data. This includes:
+
+1. **Experiment Setup**: The study involves systematic comparisons across different models, including both closed-source (e.g., GPT-3.5, GPT-4, and Gemini) and open-source models (e.g., Llama-2). The models are assessed on their ability to handle tabular data presented in various formats (text-based and image-based) [1].
+
+2. **Table Representations**: The methodology specifies multiple ways to represent tabular data, including linearized text representations and structured formats such as JSON. Each representation is designed to test how effectively the models interpret the underlying data [1].
+
+3. **Prompting Strategies**: Various prompting techniques are compared, including vanilla prompting, chain-of-thought prompting, and expert prompting. The effect of these strategies on the models' ability to perform tasks related to tables (like question answering and fact-checking) is a significant part of the evaluation [2].
+
+4. **Performance Metrics**: Model performance is measured using accuracy scores and ROUGE-L scores for generated outputs. This involves both automated metrics and manual evaluations where the generated sentences are assessed for completeness and correctness relative to the table data [3].
+
+5. **Statistical Tests**: The methodology incorporates statistical tests to determine the significance of performance differences between models when presented with different types of input (text vs. image) and prompting strategies. This helps validate the findings and conclusions drawn from the experimental results [4].
+
+This comprehensive investigative approach aims to provide insights into the capabilities of LLMs when it comes to processing, reasoning, and generating information based on tabular data [5].---Begin Question
+What is the related work of the paper?
+--End Question --Begin Context
+3. For the proportion Z test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, WikiTQ
+(Figure 3).
+C Research Questions Cont’d
+C.1 RQ1 Cont’d. Can we use image-based
+representations of tabular data?
+Figure 9 and Figure 10 show the performance com-
+parison between feeding text representations versus
+image representations of the table to GPT-4 and
+Geminipro for chain-of-thought and expert prompt-
+ing, respectively. The results resemble similar
+trends as Figure 3.
+C.2 RQ2 Cont’d. How do different text-based
+prompt methods affect LLMs’
+performance on tabular-related tasks?
+Table 8 reports the averaged accuracy scores across
+FinQA, LogicNLG, TabFact and WikiTQ that use
+accuracy as the metric. Table 9 and Table 11 re-
+port the ROUGE-L scores of LLMs’ generation on
+E2E and ToTTo dataset, respectively. Table 10 re-
+ports the scores annotated manually by the authors.
+As discussed in Section 3.4, the authors manually
+check whether the generated sentence captures all
+the information from the table and does not include
+any additional or misinformation. We assign “1”
+for sentences who satisfy the criteria and “0” other-
+wise.
+GPT GMNpro
+Llama-2
+3.5 4 7B 13B 70B
+Vanilla-T
+V 52.5 E 51.0 CoT 60.3 37.1 28.8 35.3 42.7
+63.8 39.5 29.0 35.1 46.7
+55.2 62.6 53.5 32.1 37.6 48.3
+Bracket
+V 50.9 E 47.9 CoT 60.1 38.4 28.4 36.6 42.2
+62.8 39.5 28.1 34.5 45.8
+51.4 61.9 57.3 34.2 39.3 50.0
+Column-JSON
+V 48.3 E 48.8 CoT 59.5 32.6 24.9 28.8 39.2
+62.8 34.0 26.4 28.2 42.5
+51.2 59.6 53.6 28.0 34.8 42.8
+Row-JSON
+V 49.7 E 53.7 CoT 62.3 41.2 27.9 32.6 40.9
+63.8 39.4 26.4 31.6 45.4
+53.3 62.0 52.1 31.0 35.7 48.4
+Row-Identifier
+V 52.0 E 53.2 CoT 61.2 38.6 27.9 38.5 43.2
+63.0 38.2 26.1 34.0 41.8
+51.6 62.1 56.5 30.6 33.0 45.9
+Table 8: For text-based table representations, averaged
+accuracy scores across FinQA, LogicNLG, TabFact,
+and WikiTQ for different LLMs. “GMNpro” represents
+Geminipro model, “V”, “E”, and “CoT” represent vanilla,
+expert and chain-of-thought prompting, respectively.
+C.3 RQ3 Cont’d. How do different
+image-based prompt methods affect
+LLMs’ performance on tabular-related
+tasks?
+Tables 12 and 13 report the ROUGE-L scores of
+GPT-4 and Geminipro when we use image repre-
+sentations of tables on E2E and ToTTo dataset,
+respectively. Table 14 reports the scores annotated
+manually by the authors.
+C.4 RQ5: Can These LLMs reconstruct
+tables from the image?
+Test: We conduct experiments to explore table re-
+construction ideas using GPT4 on E2E and FinQA
+datasets.
+TL;DR Answer: Mostly yes.
+Full Answer: GPT4 successfully reconstructs
+97/100 tables on the E2E dataset, and 72/100 tables
+on the FinQA dataset. We notice that for simpler ta-
+bles, GPT4 can reconstruct tables almost perfectly.
+For instance, in E2E, the only “mistake” the model
+makes is to output “é” instead of “e” in “Rainbow
+Vegetarian Café”.
+GPT4 also demonstrates a decent capability of
+reconstructing complicated tables. On FinQA,
+80
+60
+40
+20
+0
+56.5
+59.2
+80.0
+71.4
+63.8
+
+1. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+
+2. dicates highlighting relevant cells on the table image,
+“V + T” indicates both highlighting relevant cells on the
+table image and referring to them in the text.
+RQ4. Does highlighting relevant cells yield a
+better performance?
+Test: We test all six LLMs in Section 3.1 on
+FinQA which provides relevant cells in the table
+for each instance. We refer to the relevant cells
+by adding “Please pay attention to the highlighted
+cells: (row index, column index, cell value)” in the
+text prompt, or mark them on the table image di-
+rectly. Appendix E provides our prompt examples.
+We use vanilla prompting in this comparison.
+TL;DR Answer: Yes.
+Full Answer: In Table 6, we notice that in most
+cases, referring LLMs to specific cells helps LLMs
+better attend to them, thereby helping LLMs reason
+over the example. However, LLMs’ performance
+may get hurt when we refer to the relevant cells
+through text such as Llama-2-13B and 70B. This
+may be due to the inherent limitations of textual
+descriptions for conveying spatial or relational in-
+formation. In order to relate the mentioned cells in
+the text, the model needs to figure out the connec-
+tion between the mentioned cell and the cell in the
+linearized table, which can be challenging to the
+model given the complicated table structure.
+In addition, LLMs best attend to the table items
+when there are clues from both text and image. In
+Table 6, we observe that marking the relevant cells
+on the image while mentioning them through text
+leads to the most correctly answered examples (61
+examples by GPT-4 and 38 by Geminipro at the last
+row in Table 6). Such a dual-modality approach
+that combines visual cues with text references, en-
+∆ Metric
+FinQA 47.0 57.0 +10.0
+LogicNLG 43.4 58.5 +15.1
+TabFact 51.8 74.7 +22.9
+WikiTQ 69.0 86.0 +17.0
+Acc
+E2E 37.1 46.0 + 8.9 ROUGE-L
+ToTTo 30.1 47.7 +17.6
+Table 7: Performance scores of the best performed
+open-source ( ) LLM we test, Llama-2-70B versus
+closed-source ( ) LLM we test, GPT-4 on different
+datasets. The closed-source LLMs always outperform
+the open-source LLMs and we report the performance
+difference ∆ between them. For consistency across dif-
+ferent datasets, we do not include the performances
+with highlighting cells*in this comparison. Table 20 in
+Appendix D provides what combinations of table repre-
+sentation and prompting method yield this performance.
+Date Country Placing …
+10/31/2008 UK 1st …
+…
+Question: What is the number of 1st
+place finishes across all events?
+Gold: 17
+GPT-4: 15 ⨯
+Figure 7: An example from WikiTQ where GPT-4 can-
+not answer it correctly with bracket table representation
+and chain-of-thought prompting. In addition, for most
+of the table representations and prompting styles, GPT-4
+cannot answer this question correctly.
+hances LLMs’ overall reasoning ability over the
+tabular data.
+RQ5 and RQ6
+We include two additional research questions and
+our answer to them in Appendix C, including
+whether these LLMs can reconstruct tables from
+the image, and whether multimodal LLMs benefit
+from having both formats simultaneously as input.
+5 Open Problems to Increase the
+Performance of LLMs on Tabular Data
+Mathematical reasoning. We observe that LLMs
+are not good at arithmetic reasoning similar to the
+findings in prior works (Hendrycks et al., 2021;
+Imani et al., 2023). As shown in Figure 7, sim-
+ple arithmetic computing like counting the total
+number of rows that satisfy certain conditions (‘1st’
+in Figure 7) still poses challenges even for GPT-4.
+*Except for ToTTo, where the task is to generate the sen-
+tence based on the highlighted cells. On ToTTo, we include
+the highlight information just in text.
+Question: Write a sentence to describe the table.
+Name EatType Area
+Blue Spice pub Riverside
+Model Generated
+The table contains three columns and three rows, with
+L-7B
+L-13B
+the data “Blue Spice”, “pub”, and “riverside” in the
+first column, respectively.
+⨯
+The table contains information about three different
+restaurants, including their names, eat types (pub or
+restaurant), and locations (riverside or not).
+--End Context
+
+The related work section of the paper "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" identifies various previous studies and advancements in the field of language processing related to tables. It acknowledges the existing literature that has evaluated Large Language Models (LLMs) and highlights how their effectiveness has primarily been demonstrated on unstructured data while tabular information remains less explored.
+
+A significant reference is made to recent efforts that specifically tackle table-based tasks, such as the development of datasets like FinQA, LogicNLG, TabFact, and WikiTQ, which focus on numerical reasoning and fact verification within tabular contexts. The related work also points out that most research has focused on hard prompts crafted to interact with LLMs using discrete tokens. Innovations like chain-of-thought and expert prompting have emerged to enhance model performance on varied tasks but have often not been explicitly tested in the context of tabular data.
+
+Moreover, the authors note works dedicated to pre-training models for specific tasks involving tables, indicating a growing interest in the area but also establishing a gap that their paper aims to fill by systematically evaluating LLMs on table-related tasks using both textual and image-based representations [1].---Begin Question
+What is the conclusion of the paper?
+--End Question --Begin Context
+Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+
+1. Josh Achiam, Steven Adler, Sandhini Agarwal, Lama
+Ahmad, Ilge Akkaya, Florencia Leoni Aleman,
+Diogo Almeida, Janko Altenschmidt, Sam Altman,
+Shyamal Anadkat, et al. 2023. Gpt-4 technical report.
+arXiv preprint arXiv:2303.08774.
+Mubashara Akhtar, Oana Cocarascu, and Elena Simperl.
+2022. PubHealthTab: A public health table-based
+dataset for evidence-based fact checking. In Find-
+ings of the Association for Computational Linguistics:
+NAACL 2022, pages 1–16, Seattle, United States. As-
+sociation for Computational Linguistics.
+Syeda Nahida Akter, Zichun Yu, Aashiq Muhamed,
+Tianyue Ou, Alex Bäuerle, Ángel Alexander Cabrera,
+Krish Dholakia, Chenyan Xiong, and Graham Neu-
+big. 2023. An in-depth look at gemini’s language
+abilities. arXiv preprint arXiv:2312.11444.
+Hyojin Bahng, Ali Jahanian, Swami Sankaranarayanan,
+and Phillip Isola. 2022. Exploring visual prompts
+for adapting large-scale models. arXiv preprint
+arXiv:2203.17274.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, Quyet V. Do, Yan Xu,
+and Pascale Fung. 2023a. A multitask, multilingual,
+multimodal evaluation of ChatGPT on reasoning, hal-
+lucination, and interactivity. In Proceedings of the
+13th International Joint Conference on Natural Lan-
+guage Processing and the 3rd Conference of the Asia-
+Pacific Chapter of the Association for Computational
+Linguistics (Volume 1: Long Papers), pages 675–718,
+Nusa Dua, Bali. Association for Computational Lin-
+guistics.
+Yejin Bang, Samuel Cahyawijaya, Nayeon Lee, Wen-
+liang Dai, Dan Su, Bryan Wilie, Holy Lovenia, Ziwei
+Ji, Tiezheng Yu, Willy Chung, et al. 2023b. A multi-
+task, multilingual, multimodal evaluation of chatgpt
+on reasoning, hallucination, and interactivity. arXiv
+preprint arXiv:2302.04023.
+Emily M Bender, Timnit Gebru, Angelina McMillan-
+Major, and Shmargaret Shmitchell. 2021. On the
+dangers of stochastic parrots: Can language models
+be too big? In Proceedings of the 2021 ACM confer-
+ence on fairness, accountability, and transparency,
+pages 610–623.
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, et al. 2020. Language models are few-shot
+learners. Advances in neural information processing
+systems, 33:1877–1901.
+Sébastien Bubeck, Varun Chandrasekaran, Ronen El-
+dan, Johannes Gehrke, Eric Horvitz, Ece Kamar,
+Peter Lee, Yin Tat Lee, Yuanzhi Li, Scott Lund-
+berg, et al. 2023. Sparks of artificial general intelli-
+gence: Early experiments with gpt-4. arXiv preprint
+arXiv:2303.12712.
+Miao Chen, Xinjiang Lu, Tong Xu, Yanyan Li, Zhou
+Jingbo, Dejing Dou, and Hui Xiong. 2022. To-
+wards table-to-text generation with pretrained lan-
+guage model: A table structure understanding and
+text deliberating approach. In Proceedings of the
+2022 Conference on Empirical Methods in Natu-
+ral Language Processing, pages 8199–8210, Abu
+Dhabi, United Arab Emirates. Association for Com-
+putational Linguistics.
+
+2. understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+--End Context
+
+The conclusion of the paper "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" summarizes the key findings from the study, highlighting the effectiveness of various LLMs in interpreting tabular data across different prompting strategies and representation formats. The paper emphasizes that both text-based and image-based representations of tables can yield competent performance from LLMs, with the image representations sometimes improving model outcomes. 
+
+Additionally, it discusses the nuances revealed in how different prompting approaches, such as vanilla, chain-of-thought, and expert prompting, significantly affect the performance of LLMs on table-related tasks. The authors argue that their research provides valuable insights into optimizing the use of LLMs for processing tabular data in applications ranging from question answering to fact-checking. The conclusion also identifies avenues for future work, including further exploration of how LLMs can better manage mathematical reasoning in the context of tables and improving model interaction with tabular data through advanced prompting and representation strategies [1].---Begin Question
+What is the future work of the paper?
+--End Question --Begin Context
+understanding of textual and tabular data. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 8413–8426, On-
+line. Association for Computational Linguistics.
+Liangyu Zha, Junlin Zhou, Liyao Li, Rui Wang, Qingyi
+Huang, Saisai Yang, Jing Yuan, Changbao Su, Xiang
+Li, Aofeng Su, et al. 2023. Tablegpt: Towards unify-
+ing tables, nature language and commands into one
+gpt. arXiv preprint arXiv:2307.08674.
+Hongzhi Zhang, Yingyao Wang, Sirui Wang, Xuezhi
+Cao, Fuzheng Zhang, and Zhongyuan Wang. 2020.
+Table fact verification with structure-aware trans-
+former. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP), pages 1624–1629, Online. Association for
+Computational Linguistics.
+Tianshu Zhang, Xiang Yue, Yifei Li, and Huan Sun.
+2023. Tablellama: Towards open large generalist
+models for tables.
+Boyuan Zheng, Boyu Gou, Jihyung Kil, Huan Sun, and
+Yu Su. 2024. Gpt-4v (ision) is a generalist web agent,
+if grounded. arXiv preprint arXiv:2401.01614.
+A Contributions
+Idea Proposal. Naihao Deng proposed the idea
+of evaluating LLMs’ performance on table-related
+tasks with various text-based and image-based table
+representations.
+Background Survey. Zhenjie Sun conducted a
+careful survey on table-related tasks. Naihao Deng
+did the initial background survey on table-related
+tasks when he was a research assistant in Westlake
+University with Yue Zhang.
+Implementation. Zhenjie Sun came up with var-
+ious table representations and designed all the
+prompts. Zhenjie Sun also implemented the eval-
+uation pipeline for autonomous metrics. Naihao
+Deng and Zhenjie Sun implemented the pipeline
+for human evaluation.
+Experiments. Zhenjie Sun and Naihao Deng
+conducted all the experiments. Specifically,
+Zhenjie Sun conducted experiments on GPT-3.5,
+GPT-4 with text-based table representations, and
+Geminipro. Naihao Deng conducted experiments
+on Llama-2 models and GPT-4 with image-based
+table representations.
+Result Aggregation. Zhenjie Sun conducted the
+result aggregation for all the experiments.
+Human Evaluation. Zhenjie Sun, Naihao Deng,
+Ruiqi He, Aman Sikka conducted the human evalu-
+ation for the model generation.
+Paper Writing. Naihao Deng drafted the paper.
+Zhenjie Sun drafted the prompting strategies and
+metrics, and actively got involved in discussions of
+result analysis. Naihao Deng and Zhenjie Sun plot-
+ted all the tables and figures. Naihao Deng, Zhenjie
+Sun selected examples that appeared in this paper.
+Ruiqi He, Aman Sikka provided suggestions on
+example selections. Rada Mihalcea, Yue Zhang,
+Lin Ma, and Yulong Chen participated in discus-
+sions throughout the entire project and provided
+revisions and feedback on the paper.
+B Statistical Significance Test Results
+We have observed significant differences between
+LLMs’ performance. We conduct three statistical
+significance tests, including Fisher’s Exact test, Mc-
+Nemar’s Test, and proportion Z test for the model
+predictions.
+With p < 0.05:
+1. For Fisher’s Exact test, we find a statistically
+significant difference in GPT-4 performance
+between T and V inputs for FinQA, Logic-
+NLG, TabFact, WikiTQ (Figure 3), its perfor-
+mance between vanilla and expert prompting
+for table text input (Table 4), and its perfor-
+mance difference under vanilla and chain-of-
+thought prompting for image-based table rep-
+resentations (Table 5).
+2. For McNemar’s Test, we find statistically sig-
+nificant differences between GPT-4 perfor-
+mance between T and V inputs for FinQA,
+TabFact, and WikiTQ (Figure 3), as well as
+between vanilla and expert prompting for ta-
+ble text input (Table 4).
+
+1. 42, Toronto, Canada. Association for Computational
+Linguistics.
+Zhijing Jin, Sydney Levine, Fernando Gonzalez Adauto,
+Ojasv Kamal, Maarten Sap, Mrinmaya Sachan, Rada
+Mihalcea, Josh Tenenbaum, and Bernhard Schölkopf.
+2022. When to make exceptions: Exploring language
+models as accounts of human moral judgment. In
+Advances in Neural Information Processing Systems,
+volume 35, pages 28458–28473. Curran Associates,
+Inc.
+Pengfei Liu, Weizhe Yuan, Jinlan Fu, Zhengbao Jiang,
+Hiroaki Hayashi, and Graham Neubig. 2023. Pre-
+train, prompt, and predict: A systematic survey of
+prompting methods in natural language processing.
+ACM Computing Surveys, 55(9):1–35.
+Qian Liu, Bei Chen, Jiaqi Guo, Morteza Ziyadi, Zeqi
+Lin, Weizhu Chen, and Jian-Guang Lou. 2021.
+Tapex: Table pre-training via learning a neural sql
+executor. arXiv preprint arXiv:2107.07653.
+Jekaterina Novikova, Ondˇ rej Dušek, and Verena Rieser.
+2017. The E2E dataset: New challenges for end-
+to-end generation. In Proceedings of the 18th An-
+nual SIGdial Meeting on Discourse and Dialogue,
+pages 201–206, Saarbrücken, Germany. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Ankur Parikh, Xuezhi Wang, Sebastian Gehrmann, Man-
+aal Faruqui, Bhuwan Dhingra, Diyi Yang, and Dipan-
+jan Das. 2020. ToTTo: A controlled table-to-text
+generation dataset. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1173–1186, Online. As-
+sociation for Computational Linguistics.
+Panupong Pasupat and Percy Liang. 2015. Composi-
+tional semantic parsing on semi-structured tables. In
+Proceedings of the 53rd Annual Meeting of the As-
+sociation for Computational Linguistics and the 7th
+International Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 1470–
+1480, Beijing, China. Association for Computational
+Linguistics.
+Shuofei Qiao, Yixin Ou, Ningyu Zhang, Xiang Chen,
+Yunzhi Yao, Shumin Deng, Chuanqi Tan, Fei Huang,
+and Huajun Chen. 2022. Reasoning with lan-
+guage model prompting: A survey. arXiv preprint
+arXiv:2212.09597.
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya
+Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-
+try, Amanda Askell, Pamela Mishkin, Jack Clark,
+et al. 2021. Learning transferable visual models from
+natural language supervision. In International confer-
+ence on machine learning, pages 8748–8763. PMLR.
+Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten
+Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi,
+Jingyu Liu, Tal Remez, Jérémy Rapin, et al. 2023.
+Code llama: Open foundation models for code. arXiv
+preprint arXiv:2308.12950.
+Aleksandar Shtedritski, Christian Rupprecht, and An-
+drea Vedaldi. 2023. What does clip know about a red
+circle? visual prompt engineering for vlms. arXiv
+preprint arXiv:2304.06712.
+Gemini Team, Rohan Anil, Sebastian Borgeaud,
+Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu,
+
+2. Sanxing Chen, Xiaodong Liu, Jianfeng Gao, Jian Jiao,
+Ruofei Zhang, and Yangfeng Ji. 2021a. HittER: Hi-
+erarchical transformers for knowledge graph embed-
+dings. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Process-
+ing, pages 10395–10407, Online and Punta Cana,
+Dominican Republic. Association for Computational
+Linguistics.
+Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and
+William Yang Wang. 2020. Logical natural language
+generation from open-domain tables. In Proceedings
+of the 58th Annual Meeting of the Association for
+Computational Linguistics, pages 7929–7942, Online.
+Association for Computational Linguistics.
+Wenhu Chen, Hongmin Wang, Jianshu Chen, Yunkai
+Zhang, Hong Wang, Shiyang Li, Xiyou Zhou, and
+William Yang Wang. 2019. Tabfact: A large-
+scale dataset for table-based fact verification. arXiv
+preprint arXiv:1909.02164.
+Zhiyu Chen, Wenhu Chen, Charese Smiley, Sameena
+Shah, Iana Borova, Dylan Langdon, Reema Moussa,
+Matt Beane, Ting-Hao Huang, Bryan Routledge, and
+William Yang Wang. 2021b. FinQA: A dataset of nu-
+merical reasoning over financial data. In Proceedings
+of the 2021 Conference on Empirical Methods in Nat-
+ural Language Processing, pages 3697–3711, Online
+and Punta Cana, Dominican Republic. Association
+for Computational Linguistics.
+Tianji Cong, Madelon Hulsebos, Zhenjie Sun, Paul
+Groth, and H. V. Jagadish. 2024. Observatory: Char-
+acterizing embeddings of relational tables.
+Deborah A. Dahl, Madeleine Bates, Michael Brown,
+William Fisher, Kate Hunicke-Smith, David Pallett,
+Christine Pao, Alexander Rudnicky, and Elizabeth
+Shriberg. 1994. Expanding the scope of the ATIS
+task: The ATIS-3 corpus. In Human Language Tech-
+nology: Proceedings of a Workshop held at Plains-
+boro, New Jersey, March 8-11, 1994.
+Naihao Deng, Yulong Chen, and Yue Zhang. 2022. Re-
+cent advances in text-to-SQL: A survey of what we
+have and what we expect. In Proceedings of the
+29th International Conference on Computational Lin-
+guistics, pages 2166–2187, Gyeongju, Republic of
+Korea. International Committee on Computational
+Linguistics.
+Xiang Deng, Huan Sun, Alyssa Lees, You Wu, and
+Cong Yu. 2020. Turl: table understanding through
+representation learning. Proceedings of the VLDB
+Endowment, 14(3):307–319.
+Charles T. Hemphill, John J. Godfrey, and George R.
+Doddington. 1990. The ATIS spoken language sys-
+tems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley,
+Pennsylvania, June 24-27,1990.
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul
+Arora, Steven Basart, Eric Tang, Dawn Song, and
+Jacob Steinhardt. 2021. Measuring mathematical
+problem solving with the math dataset. NeurIPS.
+Jonathan Herzig, Pawel Krzysztof Nowak, Thomas
+Müller, Francesco Piccinno, and Julian Eisenschlos.
+2020. TaPas: Weakly supervised table parsing via
+pre-training. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4320–4333, Online. Association for Computa-
+tional Linguistics.
+Wonseok Hwang, Jinyeong Yim, Seunghyun Park, and
+Minjoon Seo. 2019. A comprehensive exploration
+on wikisql with table-aware word contextualization.
+arXiv preprint arXiv:1902.01069.
+Shima Imani, Liang Du, and Harsh Shrivastava. 2023.
+MathPrompter: Mathematical reasoning using large
+language models. In Proceedings of the 61st An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 5: Industry Track), pages 37–
+--End Context
+
+The future work section of the paper "Tables as Texts or Images: Evaluating the Table Reasoning Ability of LLMs and MLLMs" discusses several potential areas for further research:
+
+1. **Improving Mathematical Reasoning**: The authors observed that LLMs, particularly GPT-4, struggle with arithmetic reasoning tasks that involve counting or performing calculations based on tabular data. Future research can focus on enhancing LLMs' capabilities in this area to ensure more accurate results when faced with numerical reasoning tasks [1].
+
+2. **Advanced Prompting Techniques**: The paper suggests exploring more sophisticated techniques beyond those currently tested, such as refining prompting strategies that might further improve the models' performance on tabular data tasks. This may include developing new methods to assist LLMs in understanding the connections between query text and tabular structures more effectively [2].
+
+3. **Multimodal Interactions**: Further investigation into how multimodal LLMs can benefit from being presented with both text and image representations concurrently is another suggested area. Understanding the best approaches to utilize both types of data simultaneously could improve the models' reasoning abilities and accuracy in handling complex tabular information [3].
+
+4. **Dataset Expansion**: The authors indicate a need to gather more diverse datasets specifically designed for testing the reasoning capabilities of LLMs with tabular information. This could help generalize findings across different contexts and applications [4].
+
+In conclusion, the authors emphasize the importance of addressing these areas to advance the understanding and practical application of LLMs in processing tabular data, particularly for real-world applications in diverse fields [5].

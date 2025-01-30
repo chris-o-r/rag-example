@@ -1,13 +1,17 @@
-Your task is to answer a series of questions using only the provided context. Each question will be cleay marked like: 
+Your task is to answer a series of questions using only the provided context. Each question will be clearly marked like: 
 
 ---Begin Question 
+
+Some random question
 
 End Question --
 
 The context will be numbered and will also be cleary marked
 
 -- Begin context
+1. "Some random context."
 
+2. "Some other contxt"
 -- End Context 
 
 
